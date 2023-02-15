@@ -14,14 +14,19 @@ import (
 */
 func TestGetFunFacts(t *testing.T) {
 	type test struct {
-		input // her må du skrive riktig type for input
-		want  // her må du skrive riktig type for returverdien
+		input string
+		want  []string
 	}
 
 	// Her må du legge inn korrekte testverdier
 	//tests := []test{
 	//  {input: , want: },
 	//}
+	tests := []test{
+		{input: "sun", want: []string{"Temperatur i Solens kjerne", "Temperatur på ytre lag av solen"}},
+		{input: "luna", want: []string{"Temperatur i Solens kjerne", "Temperatur på ytre lag av solen"}},
+		{input: "terra", want: []string{"Temperatur i Solens kjerne", "Temperatur på ytre lag av solen"}},
+	}
 
 	for _, tc := range tests {
 		got := GetFunFacts(tc.input)
