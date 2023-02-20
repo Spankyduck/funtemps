@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"modul/conv"
+	"github.com/Spankyduck/funtemps/conv"
 )
 
 // Definerer flag-variablene i hoved-"scope"
