@@ -21,7 +21,7 @@ func TestFarhenheitToCelsius(t *testing.T) {
 	}
 
 	tests := []test{
-		{input: 134, want: 56.67},
+		{input: 134, want: 56.666666666666664},
 	}
 
 	for _, tc := range tests {
@@ -53,18 +53,18 @@ func TestCelsiusToFahrenheit(t *testing.T) {
 	}
 }
 
-func TestKelvinToFarhenheit(t *testing.T) {
+func TestKelvinToFahrenheit(t *testing.T) {
 	type test struct {
 		input float64
 		want  float64
 	}
 
 	tests := []test{
-		{input: 100, want: -279.67},
+		{input: 100, want: -279.66999999999996},
 	}
 
 	for _, tc := range tests {
-		got := KelvinToFarhenheit(tc.input)
+		got := KelvinToFahrenheit(tc.input)
 		if !reflect.DeepEqual(tc.want, got) {
 			t.Errorf("expected: %v, got: %v", tc.want, got)
 		}
@@ -96,29 +96,29 @@ func TestFarhenheitToKelvin(t *testing.T) {
 	}
 
 	tests := []test{
-		{input: 100, want: 310.9277777778},
+		{input: 100, want: 310.92777777777775},
 	}
 
 	for _, tc := range tests {
-		got := FarhenheitToKelvin(tc.input)
+		got := FahrenheitToKelvin(tc.input)
 		if !reflect.DeepEqual(tc.want, got) {
 			t.Errorf("expected: %v, got: %v", tc.want, got)
 		}
 	}
 }
 
-func TestKelivnToCelsius(t *testing.T) {
+func TestKelvinToCelsius(t *testing.T) {
 	type test struct {
 		input float64
 		want  float64
 	}
 
 	tests := []test{
-		{input: 100, want: -173.15},
+		{input: 100, want: -173.14999999999998},
 	}
 
 	for _, tc := range tests {
-		got := KelivnToCelsius(tc.input)
+		got := KelvinToCelsius(tc.input)
 		if !reflect.DeepEqual(tc.want, got) {
 			t.Errorf("expected: %v, got: %v", tc.want, got)
 		}

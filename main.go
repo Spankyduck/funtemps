@@ -3,25 +3,19 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 	"strconv"
-	"Funtemps-oppg/funtemps/conv"
-	
+
+	"modul/conv"
 )
 
 // Definerer flag-variablene i hoved-"scope"
-var fahr string
-var fahrFloat float64
-
-var kelvin string
-var kelvinFloat float64
-
-var celsius string
-var celsiusFloat float64
-
-var scale string
+var fahrenheit float64
+var celsius float64
+var kelvin float64
 var out string
-var funfacts string
+var Funfacts string
+var Svar float64
+var funfactsunit string
 
 // Bruker init (som anbefalt i dokumentasjonen) for å sikre at flagvariablene
 // er initialisert.
@@ -35,57 +29,57 @@ func init() {
 	*/
 
 	// Definerer og initialiserer flagg-variablene
-	flag.StringVar(&fahr, "F", "0.0", "temperatur i grader fahrenheit")
-	flag.StringVar(&celsius, "C", "0.0", "Temperatur i grader celsius")
-	flag.StringVar(&kelvin, "K", "0.0", "Temperatur i Kelvin")
-
+	flag.Float64Var(&fahrenheit, "F", 0.0, "temperatur i grader fahrenheit")
 	// Du må selv definere flag-variablene for "C" og "K"
+	flag.Float64Var(&celsius, "C", 0.0, "temperatur i grader celsius")
+	flag.Float64Var(&kelvin, "K", 0.0, "temperatur i grader kelvin")
 	flag.StringVar(&out, "out", "C", "beregne temperatur i C - celsius, F - farhenheit, K- Kelvin")
-	flag.StringVar(&funfacts, "funfacts", "sun", "\"fun-facts\" om sun - Solen, luna - Månen og terra - Jorden")
+	flag.StringVar(&Funfacts, "funfacts", "sun", "\"fun-facts\" om sun - Solen, luna - Månen og terra - Jorden")
+	flag.StringVar(&funfactsunit, "t", "C", "bruker setter input verdi, hvis ikke setter programmet til defualt verdi Celsius")
 	// Du må selv definere flag-variabelen for -t flagget, som bestemmer
 	// hvilken temperaturskala skal brukes når funfacts skal vises
-	flag.StringVar(&scale, "t", "", "Funfacts tempreaturskala i C, F, K.")
 
+}
+
+func isFlagPassed(name string) bool {
+	found := false
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == name {
+			found = true
+		}
+	})
+	return found
+}
+
+func GetFunFactsSun(about string) []float64 {
+	if about == "Sun" {
+		return []float64{5506.85, 15000000}
+	}
+	return nil
+}
+
+func Separate(num string) string {
+	n := len(num)
+	if n <= 3 {
+		return num
+	}
+	return Separate(num[:n-3]) + " " + num[n-3:]
+}
+
+func StringToFloat64(s string) float64 {
+	f, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		panic(err)
+	}
+	return f
 }
 
 func main() {
 
 	flag.Parse()
-    
-	celsiusFloat := toFloat(celsius)
-	fahrFloat := toFloat(fahr)
-	kelvinFloat := toFloat(kelvin)
 
-	if isFlagPassed("funfacts") || isFlagPassed("t") {
-	    if isFlagPassed("funfacts") {
-	     fmt.Println("funfacts can only be used with t")
-		 os.Exit(1)
-		} else if isFlagPassed("t") {
-	     fmt.Println("t and funfacts are true")
-		 os.Exit(1)
-		}
-    } else if isFlagPassed("out") {
-	     fmt.Printf("Can not convert from %s to %s.\n", out, out)
-		 os.Exit(1)
-    } else {
-	switch {
-	case out == "C" && isFlagPassed("F"): //F til C
-	         fmt.Println("%vF er %vC", fahrFloat, formatOutput(conv.FarhenheitToCelsius(fahrFloat)))
-	case out == "C" && isFlagPassed("F"): //F til C
-	         fmt.Println("%vF er %vK", fahrFloat, formatOutput(conv.FarhenheitToKelvin(fahrFloat)))
-	case out == "C" && isFlagPassed("F"): //F til C
-	         fmt.Println("%vC er %vF", celsiusFloat, formatOutput(conv.CelsiusToFahrenheit(fahrFloat)))
-	case out == "C" && isFlagPassed("F"): //F til C
-	         fmt.Println("%vC er %vK", celsiusFloat, formatOutput(conv.CelsiusToKelvin(fahrFloat)))
-	case out == "C" && isFlagPassed("F"): //F til C
-	         fmt.Println("%vK er %vC", kelvinFloat, formatOutput(conv.KelivnToCelsius(fahrFloat)))
-	case out == "C" && isFlagPassed("F"): //F til C
-	         fmt.Println("%vK er %vF", kelvinFloat, formatOutput(conv.KelvinToFarhenheit(fahrFloat)))
-	}
-  } 
-} 
-
-	/*   Her må logikken for flaggene og kall til funksjoner fra conv og funfacts
+	/**
+	    Her må logikken for flaggene og kall til funksjoner fra conv og funfacts
 	    pakkene implementeres.
 
 	    Det er anbefalt å sette opp en tabell med alle mulige kombinasjoner
@@ -105,47 +99,91 @@ func main() {
 	    implementert i flag-pakken og at den vil skrive ut "Usage" med
 	    beskrivelsene av flagg-variablene, som angitt i parameter fire til
 	    funksjonene Float64Var og StringVar
-	
+	*/
 
 	// Her er noen eksempler du kan bruke i den manuelle testingen
-	fmt.Println(fahr, out, funfacts)
-
 	fmt.Println("len(flag.Args())", len(flag.Args()))
 	fmt.Println("flag.NFlag()", flag.NFlag())
 
 	fmt.Println(isFlagPassed("out"))
 
-	Eksempel på enkel logikk
+	// Eksempel på enkel logikk
+
+	Erlik := "="
+	F := "°F"
+	C := "°C"
+	K := "°K"
+
+	// FahrenheitToCelsius
 	if out == "C" && isFlagPassed("F") {
-		// Kalle opp funksjonen FahrenheitToCelsius(fahr), som da
-		// skal returnere °C
-		fmt.Println("0°F er -17.78°C")
+		Svar = conv.FarhenheitToCelsius(fahrenheit)
+
+		fmt.Printf("%.9g%s %s ", fahrenheit, F, Erlik)
+		if Svar == float64(int(Svar)) {
+			fmt.Printf("%s %s\n", Separate(strconv.Itoa(int(Svar))), C)
+		} else {
+			fmt.Printf("%s %s\n", Separate(strconv.FormatFloat(Svar, 'f', 2, 64)), C)
+		}
 	}
 
-	
+	// CelsiusToFahrenheit
+	if out == "F" && isFlagPassed("C") {
+		Svar = conv.CelsiusToFahrenheit(celsius)
 
-Funksjonen sjekker om flagget er spesifisert på kommandolinje
-*/
-func isFlagPassed(name string) bool {
-	found := false
-	flag.Visit(func(f *flag.Flag) {
-		if f.Name == name {
-			found = true
+		fmt.Printf("%.9g %s %s ", celsius, C, Erlik)
+		if Svar == float64(int(Svar)) {
+			fmt.Printf("%d %s\n", int(Svar), F)
+		} else {
+			fmt.Printf("%.2f %s\n", Svar, F)
 		}
-	})
-	return found
-}
+	}
 
-func toFloat(str string) float64 {
-    value, err := strconv.ParseFloat(str, 64)
-    if err != nil {
-        fmt.Printf("Error converting string to float: %v\n", err)
-        os.Exit(1)
-    }
-    return value
-}
+	// CelsiusToKelvin
+	if out == "K" && isFlagPassed("C") {
+		Svar = conv.CelsiusToKelvin(celsius)
 
-func formatOutput(value float64) string {
-    return strconv.FormatFloat(value, 'f', 2, 64)
-}
+		fmt.Printf("%.9g %s %s ", celsius, C, Erlik)
+		if Svar == float64(int(Svar)) {
+			fmt.Printf("%d %s\n", int(Svar), K)
+		} else {
+			fmt.Printf("%.2f %s\n", Svar, K)
+		}
+	}
 
+	// KelvinToCelsius
+	if out == "C" && isFlagPassed("K") {
+		Svar = conv.KelvinToCelsius(kelvin)
+
+		fmt.Printf("%.9g %s %s ", kelvin, K, Erlik)
+		if Svar == float64(int(Svar)) {
+			fmt.Printf("%d %s\n", int(Svar), C)
+		} else {
+			fmt.Printf("%.2f %s\n", Svar, C)
+		}
+	}
+
+	// FahrenheitToKelvin
+	if out == "K" && isFlagPassed("F") {
+		Svar = conv.FahrenheitToKelvin(fahrenheit)
+
+		fmt.Printf("%.9g %s %s ", fahrenheit, F, Erlik)
+		if Svar == float64(int(Svar)) {
+			fmt.Printf("%d %s\n", int(Svar), K)
+		} else {
+			fmt.Printf("%.2f %s\n", Svar, K)
+		}
+	}
+
+	// KelvinToFahrenheit
+	if out == "F" && isFlagPassed("K") {
+		Svar = conv.FarhenheitToCelsius(kelvin)
+
+		fmt.Printf("%.9g %s %s ", kelvin, K, Erlik)
+		if Svar == float64(int(Svar)) {
+			fmt.Printf("%d %s\n", int(Svar), F)
+		} else {
+			fmt.Printf("%.2f %s\n", Svar, F)
+		}
+	}
+
+}
